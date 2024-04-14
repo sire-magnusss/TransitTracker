@@ -11,20 +11,15 @@ import {
 
 import Icon from "react-native-vector-icons/FontAwesome";
 
-import MontFontText from "../components/MontFontText";
+import Logo from "../assets/images/LogoTransitTracker.png";
 
-function LoginScreen() {
+function LoginScreen({ navigation }) {
   [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-        <Image
-          source={{
-            uri: "https://logowik.com/content/uploads/images/transit-app5842.jpg",
-          }}
-          style={styles.logo}
-        />
+        <Image source={Logo} style={styles.logo} />
       </View>
 
       <View style={styles.inputContainer}>
@@ -60,12 +55,13 @@ function LoginScreen() {
           styles.loginButton,
           pressed && styles.buttonPressed,
         ]}
+        onPress={() => navigation.navigate("RouteSelectionScreen")}
       >
         <Text style={styles.buttonText}> Login</Text>
       </Pressable>
 
       <TouchableOpacity>
-        <MontFontText>Not registered? Sign Up</MontFontText>
+        <Text>Not registered? Sign Up</Text>
       </TouchableOpacity>
     </View>
   );
@@ -80,7 +76,6 @@ const styles = StyleSheet.create({
   logoContainer: {
     marginTop: 0,
     backgroundColor: "f0f0f0",
-    padding: 20,
     alignItems: "center",
     justifyContent: "center",
     borderColor: "#ccc",
@@ -93,7 +88,7 @@ const styles = StyleSheet.create({
     borderColor: "#cccccc",
     borderWidth: 1,
     borderRadius: 8,
-    padding: 20,
+    padding: 15,
     marginBottom: 20,
     elevation: 1.2,
   },
@@ -133,16 +128,18 @@ const styles = StyleSheet.create({
     right: 10,
   },
   buttonText: {
-    color: "white",
+    color: "#000",
     fontSize: 20,
+    fontWeight: "800",
   },
   buttonPressed: {
-    opacity: 0.8,
+    opacity: 0.4,
   },
 
   logo: {
-    width: 200,
-    height: 100,
+    width: 250,
+    height: 250,
+    resizeMode: "contain",
   },
 });
 
