@@ -16,6 +16,7 @@ export default function App() {
           component={LoginScreen}
           options={{ headerShown: false }}
         />
+
         <Stack.Screen
           name="RouteSelectionScreen"
           component={RouteSelectionScreen}
