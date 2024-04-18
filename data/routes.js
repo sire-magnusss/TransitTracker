@@ -1,5 +1,5 @@
 const routes = [
-  { id: 1, name: "Tlokweng Route 1" },
+  { id: 1, name: "Tlokweng Route 6" },
   { id: 2, name: "Tlokweng Route 2" },
   { id: 3, name: "Tlokweng Route 4" },
   { id: 4, name: "Tlokweng Route 3" },

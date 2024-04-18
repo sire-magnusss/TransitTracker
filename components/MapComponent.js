@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 
@@ -8,6 +8,7 @@ const MapComponent = () => {
   const [route, setRoute] = useState(null);
   const [combiPosition, setCombiPosition] = useState(null);
   const [combiRotation, setCombiRotation] = useState(0);
+  const mapRef = useRef(null);
 
   const userPosition = {
     latitude: -24.673680865636495,
@@ -22,6 +23,11 @@ const MapComponent = () => {
   const destination = {
     latitude: -24.663808910379593,
     longitude: 25.980932811887435,
+  };
+
+  const busStopPosition = {
+    latitude: -24.673161,
+    longitude: 25.925708,
   };
 
   useEffect(() => {
@@ -59,11 +65,23 @@ const MapComponent = () => {
         );
         setCombiPosition(route[index]);
         setCombiRotation(currentBearing);
+
+        mapRef.current?.animateCamera(
+          {
+            center: route[index],
+            pitch: 2,
+            heading: currentBearing,
+            altitude: 200,
+            zoom: 15, // Lower zoom level for broader view
+          },
+          { duration: 2000 } // Slower animation for smooth transition
+        );
+
         index++;
       } else {
         clearInterval(interval);
       }
-    }, 1000); // Adjust speed by changing interval time
+    }, 2000); // Slower combi movement
 
     return () => clearInterval(interval);
   }, [route]);
@@ -71,13 +89,14 @@ const MapComponent = () => {
   return (
     <View style={styles.container}>
       <MapView
+        ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
           latitude: (origin.latitude + destination.latitude) / 2,
           longitude: (origin.longitude + destination.longitude) / 2,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          latitudeDelta: 0.5, // Broader initial view
+          longitudeDelta: 0.5,
         }}
       >
         <Marker coordinate={origin} title="Game City" />
@@ -98,12 +117,14 @@ const MapComponent = () => {
           </Marker>
         )}
         {route && (
-          <Polyline
-            coordinates={route}
-            strokeColor="#41B06E" // Black color
-            strokeWidth={6} // Reduced stroke width for aesthetic blending
-          />
+          <Polyline coordinates={route} strokeColor="#41B06E" strokeWidth={6} />
         )}
+        <Marker coordinate={busStopPosition} title="Bus Stop">
+          <Image
+            source={require("../assets/images/stopo.png")}
+            style={styles.markerIcon}
+          />
+        </Marker>
       </MapView>
     </View>
   );

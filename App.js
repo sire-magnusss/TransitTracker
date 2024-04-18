@@ -1,13 +1,32 @@
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import LoginScreen from "./screens/RiderLogin";
 import RouteSelectionScreen from "./screens/RouteSelectionScreen";
-import { NavigationContainer } from "@react-navigation/native";
-import "react-native-gesture-handler";
+import MapComponent from "./components/MapComponent";
 
-import { createStackNavigator } from "@react-navigation/stack";
+const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
+
+function RouteSelectionDrawer() {
+  return (
+    <Drawer.Navigator
+      screenOptions={{
+        headerShown: false,
+        drawerType: "slide",
+      }}
+    >
+      <Drawer.Screen
+        name="RouteSelection"
+        component={RouteSelectionScreen}
+        options={{ title: "Select Route" }}
+      />
+    </Drawer.Navigator>
+  );
+}
 
 export default function App() {
-  const Stack = createStackNavigator();
-
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -16,10 +35,14 @@ export default function App() {
           component={LoginScreen}
           options={{ headerShown: false }}
         />
-
+        <Stack.Screen
+          name="MapScreen"
+          component={MapComponent}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="RouteSelectionScreen"
-          component={RouteSelectionScreen}
+          component={RouteSelectionDrawer}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

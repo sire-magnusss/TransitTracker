@@ -1,8 +1,13 @@
 import { Text, StyleSheet, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 function RouteItem({ name }) {
+  const navigation = useNavigation();
+  function handlePress() {
+    navigation.navigate("MapScreen");
+  }
   return (
-    <Pressable style={styles.itemContainer}>
+    <Pressable onPress={handlePress} style={styles.itemContainer}>
       <Text style={styles.itemText}>{name}</Text>
     </Pressable>
   );
