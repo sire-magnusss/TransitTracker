@@ -15,6 +15,7 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import Logo from "../assets/images/LogoTransitTracker.png";
 import { signIn } from "../lib/appwrite";
+import { ScrollView } from "react-native";
 
 function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
@@ -45,61 +46,63 @@ function LoginScreen({ navigation }) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 5}
     >
-      <View style={styles.logoContainer}>
-        <Image source={Logo} style={styles.logo} />
-      </View>
-      <View style={styles.inputContainer}>
-        <View style={styles.emailContainer}>
-          <TextInput
-            placeholder="Email"
-            keyboardType="email-address"
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-          />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.logoContainer}>
+          <Image source={Logo} style={styles.logo} />
         </View>
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry={!passwordVisible}
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TouchableOpacity
-            onPress={() => setPasswordVisible(!passwordVisible)}
-            style={styles.icon}
-          >
-            <Icon
-              name={passwordVisible ? "eye" : "eye-slash"}
-              size={20}
-              color="#607274"
+        <View style={styles.inputContainer}>
+          <View style={styles.emailContainer}>
+            <TextInput
+              placeholder="Email"
+              keyboardType="email-address"
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
             />
+          </View>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              secureTextEntry={!passwordVisible}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              onPress={() => setPasswordVisible(!passwordVisible)}
+              style={styles.icon}
+            >
+              <Icon
+                name={passwordVisible ? "eye" : "eye-slash"}
+                size={20}
+                color="#607274"
+              />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.forgotPassword}>
-          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+        <Pressable
+          style={({ pressed }) => [
+            styles.loginButton,
+            pressed && styles.buttonPressed,
+            loading && styles.buttonDisabled,
+          ]}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" size="large" />
+          ) : (
+            <Text style={styles.buttonText}>Login</Text>
+          )}
+        </Pressable>
+        <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
+          <Text style={styles.registerText}>Not registered? Sign Up</Text>
         </TouchableOpacity>
-      </View>
-      <Pressable
-        style={({ pressed }) => [
-          styles.loginButton,
-          pressed && styles.buttonPressed,
-          loading && styles.buttonDisabled,
-        ]}
-        onPress={handleLogin}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator color="#fff" size="large" />
-        ) : (
-          <Text style={styles.buttonText}>Login</Text>
-        )}
-      </Pressable>
-      <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
-        <Text style={styles.registerText}>Not registered? Sign Up</Text>
-      </TouchableOpacity>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -109,6 +112,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center", // Control the layout of ScrollView children
+    alignItems: "center", // Control the layout of ScrollView children
+    paddingVertical: 20,
   },
   logoContainer: {
     marginTop: 0,

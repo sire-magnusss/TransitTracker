@@ -34,7 +34,7 @@ function RouteSelectionDrawer() {
 }
 
 export default function App() {
-  return <HelpScreen />;
+  return <LoginScreen />;
   // return (
   //   <NavigationContainer>
   //     <Stack.Navigator>
