@@ -1,15 +1,11 @@
-import { StyleSheet, View, Text, Platform, Image } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView } from "react-native";
 import tw from "tailwind-react-native-classnames";
-import { SafeAreaView } from "react-native-safe-area-context";
-
 import SearchInputComponent from "../components/SearchInput";
-import RouteOptionsList from "../components/RouteItems/RouteOptionsList";
-
 import CombiImg from "../assets/images/combiimage.png";
-import { useState } from "react";
 import routes from "../data/routes";
 
-function RouteSelectionScreen() {
+function RouteSelectionScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredRoutes, setFilteredRoutes] = useState(routes);
 
@@ -25,42 +21,42 @@ function RouteSelectionScreen() {
     }
   };
 
-  function onPressHandler() {
-    filterRoutes(searchQuery);
-  }
+  const handleRouteSelect = (route) => {
+    navigation.navigate('MapScreen', { selectedRoute: route });
+  };
 
   return (
     <SafeAreaView style={styles.rootContainer}>
       <View style={styles.container}>
         <View style={styles.titleContainer}>
-          <Text
-            style={[
-              tw`font-bold text-black `,
-              { fontSize: 27, marginRight: 25 },
-            ]}
-          >
+          <Text style={[tw`font-bold text-black`, { fontSize: 27, marginRight: 25 }]}>
             Select Route
           </Text>
-          <Image
-            source={CombiImg}
-            style={{ width: 85, height: 85, resizeMode: "contain" }}
-          />
+          <Image source={CombiImg} style={{ width: 85, height: 85, resizeMode: "contain" }} />
         </View>
 
         <SearchInputComponent
           value={searchQuery}
           onChangeText={setSearchQuery}
-          onSearch={onPressHandler}
+          onSearch={() => filterRoutes(searchQuery)}
         />
 
         <View style={styles.operationalHoursContainer}>
           <Text style={styles.operationHoursText}>
-            Operational Hours{" "}
-            <Text style={styles.hoursRange}>6:00 am - 8:00pm</Text>
+            Operational Hours <Text style={styles.hoursRange}>5:00 am - 9:00pm</Text>
+          </Text>
+          <Text style={styles.fareText}>
+            Public Transport Fare is P7.00
           </Text>
         </View>
 
-        <RouteOptionsList routes={filteredRoutes} />
+        <View style={styles.listContainer}>
+          {filteredRoutes.map((route) => (
+            <TouchableOpacity key={route.id} style={styles.routeItem} onPress={() => handleRouteSelect(route)}>
+              <Text style={styles.routeText}>{route.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -94,6 +90,27 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontStyle: "italic",
   },
+  fareText: { // Added fare text style
+    fontSize: 13,
+    fontStyle: "italic",
+    marginTop: 5, // Added margin to separate from the hours text
+  },
+  listContainer: {
+    width: '100%',
+    paddingHorizontal: 10,
+  },
+  routeItem: {
+    backgroundColor: '#90D26D',
+    shadowOpacity: 0.2,
+    elevation: 3,
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 5,
+  },
+  routeText: {
+    fontSize: 16,
+    color: '#333',
+  }
 });
 
 export default RouteSelectionScreen;
