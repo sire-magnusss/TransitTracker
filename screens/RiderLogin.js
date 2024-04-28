@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -6,36 +6,66 @@ import {
   Text,
   TextInput,
   Pressable,
+  Platform,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
-
 import Icon from "react-native-vector-icons/FontAwesome";
-
 import Logo from "../assets/images/LogoTransitTracker.png";
+import { signIn } from "../lib/appwrite";
 
 function LoginScreen({ navigation }) {
-  [passwordVisible, setPasswordVisible] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please enter both email and password");
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const session = await signIn(email, password);
+      setLoading(false);
+      navigation.navigate("RouteSelectionScreen");
+    } catch (error) {
+      setLoading(false);
+      Alert.alert("Login Error", error.message);
+    }
+  };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 5}
+    >
       <View style={styles.logoContainer}>
         <Image source={Logo} style={styles.logo} />
       </View>
-
       <View style={styles.inputContainer}>
         <View style={styles.emailContainer}>
           <TextInput
             placeholder="Email"
             keyboardType="email-address"
             style={styles.input}
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
           />
         </View>
-
         <View style={styles.passwordContainer}>
           <TextInput
             style={styles.input}
             placeholder="Password"
             secureTextEntry={!passwordVisible}
+            value={password}
+            onChangeText={setPassword}
           />
           <TouchableOpacity
             onPress={() => setPasswordVisible(!passwordVisible)}
@@ -44,26 +74,33 @@ function LoginScreen({ navigation }) {
             <Icon
               name={passwordVisible ? "eye" : "eye-slash"}
               size={20}
-              color="#cccccc"
+              color="#607274"
             />
           </TouchableOpacity>
         </View>
+        <TouchableOpacity style={styles.forgotPassword}>
+          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+        </TouchableOpacity>
       </View>
-
       <Pressable
         style={({ pressed }) => [
           styles.loginButton,
           pressed && styles.buttonPressed,
+          loading && styles.buttonDisabled,
         ]}
-        onPress={() => navigation.navigate("RouteSelectionScreen")}
+        onPress={handleLogin}
+        disabled={loading}
       >
-        <Text style={styles.buttonText}> Login</Text>
+        {loading ? (
+          <ActivityIndicator color="#fff" size="large" />
+        ) : (
+          <Text style={styles.buttonText}>Login</Text>
+        )}
       </Pressable>
-
-      <TouchableOpacity>
-        <Text>Not registered? Sign Up</Text>
+      <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
+        <Text style={styles.registerText}>Not registered? Sign Up</Text>
       </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -89,8 +126,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     padding: 15,
-    marginBottom: 20,
+    marginBottom: 15,
     elevation: 1.2,
+  },
+  forgotPassword: {
+    alignSelf: "flex-end",
+    marginRight: 5,
+  },
+  forgotPasswordText: {
+    color: "#607274",
   },
   emailContainer: {
     flexDirection: "row",
@@ -121,11 +165,14 @@ const styles = StyleSheet.create({
     borderRadius: 11,
     paddingVertical: 10,
     paddingHorizontal: 20,
-    marginBottom: 10,
+    marginVertical: 10,
   },
   icon: {
     position: "absolute",
     right: 10,
+  },
+  registerText: {
+    fontWeight: "bold",
   },
   buttonText: {
     color: "#000",
@@ -135,10 +182,12 @@ const styles = StyleSheet.create({
   buttonPressed: {
     opacity: 0.4,
   },
-
+  buttonDisabled: {
+    backgroundColor: "#cccccc",
+  },
   logo: {
-    width: 250,
-    height: 250,
+    width: 200,
+    height: 200,
     resizeMode: "contain",
   },
 });
