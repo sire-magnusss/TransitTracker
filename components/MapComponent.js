@@ -4,34 +4,25 @@ import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 
 const GOOGLE_MAPS_APIKEY = "AIzaSyDIw1MqO-GN2-xpmJdPbjAnciuptjbO_d4";
 
-const MapComponent = () => {
-  const [route, setRoute] = useState(null);
+const MapComponent = ({ route }) => {
+  const { selectedRoute } = route.params;
+  const [mapRoute, setMapRoute] = useState(null);
   const [combiPosition, setCombiPosition] = useState(null);
-  const [combiRotation, setCombiRotation] = useState(0);
+  const [returnCombiPosition, setReturnCombiPosition] = useState(null);
   const mapRef = useRef(null);
 
-  const userPosition = {
-    latitude: -24.673680865636495,
-    longitude: 25.925682664900226,
-  };
-
-  const origin = {
+  const hardcodedOrigin = {
     latitude: -24.686971603877858,
     longitude: 25.877041155776624,
   };
 
-  const destination = {
+  const hardcodedDestination = {
     latitude: -24.663808910379593,
     longitude: 25.980932811887435,
   };
 
-  const busStopPosition = {
-    latitude: -24.673161,
-    longitude: 25.925708,
-  };
-
   useEffect(() => {
-    const fetchRoute = async () => {
+    const fetchRoute = async (origin, destination) => {
       try {
         const response = await fetch(
           `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=${GOOGLE_MAPS_APIKEY}`
@@ -40,51 +31,37 @@ const MapComponent = () => {
         if (json.routes.length && json.routes[0].overview_polyline.points) {
           const points = json.routes[0].overview_polyline.points;
           const decodedCoordinates = decodePolyline(points);
-          setRoute(decodedCoordinates);
+          setMapRoute(decodedCoordinates);
         }
       } catch (error) {
         console.error("Error fetching directions:", error);
       }
     };
 
-    fetchRoute();
-  }, []);
+    if (selectedRoute.name === "Tlokweng Route 6") {
+      fetchRoute(hardcodedOrigin, hardcodedDestination);
+    } else if (selectedRoute.origin && selectedRoute.destination) {
+      fetchRoute(selectedRoute.origin, selectedRoute.destination);
+    }
+  }, [selectedRoute]);
 
   useEffect(() => {
-    if (!route || route.length === 0) return;
+    if (!mapRoute || mapRoute.length === 0) return;
 
     let index = 0;
     const interval = setInterval(() => {
-      if (index < route.length - 1) {
-        const nextPosition = route[index + 1];
-        const currentBearing = getBearing(
-          route[index].latitude,
-          route[index].longitude,
-          nextPosition.latitude,
-          nextPosition.longitude
-        );
-        setCombiPosition(route[index]);
-        setCombiRotation(currentBearing);
-
-        mapRef.current?.animateCamera(
-          {
-            center: route[index],
-            pitch: 2,
-            heading: currentBearing,
-            altitude: 200,
-            zoom: 15, // Lower zoom level for broader view
-          },
-          { duration: 2000 } // Slower animation for smooth transition
-        );
-
+      if (index < mapRoute.length - 1) {
+        const nextPosition = mapRoute[index + 1];
+        setCombiPosition(mapRoute[index]);
+        setReturnCombiPosition(mapRoute[mapRoute.length - 1 - index]);
         index++;
       } else {
         clearInterval(interval);
       }
-    }, 2000); // Slower combi movement
+    }, 2000);
 
     return () => clearInterval(interval);
-  }, [route]);
+  }, [mapRoute]);
 
   return (
     <View style={styles.container}>
@@ -93,22 +70,18 @@ const MapComponent = () => {
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
-          latitude: (origin.latitude + destination.latitude) / 2,
-          longitude: (origin.longitude + destination.longitude) / 2,
-          latitudeDelta: 0.5, // Broader initial view
-          longitudeDelta: 0.5,
+          latitude: (selectedRoute.origin.latitude + selectedRoute.destination.latitude) / 2,
+          longitude: (selectedRoute.origin.longitude + selectedRoute.destination.longitude) / 2,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
         }}
       >
-        <Marker coordinate={origin} title="Game City" />
-        <Marker coordinate={destination} title="Tlokweng" />
-        <Marker coordinate={userPosition} title="User Stop" />
         {combiPosition && (
           <Marker
             coordinate={combiPosition}
-            rotation={combiRotation}
             anchor={{ x: 0.5, y: 0.5 }}
             flat={true}
-            title="Combi"
+            title="Combi 1"
           >
             <Image
               source={require("../assets/images/combiicon.png")}
@@ -116,15 +89,22 @@ const MapComponent = () => {
             />
           </Marker>
         )}
-        {route && (
-          <Polyline coordinates={route} strokeColor="#41B06E" strokeWidth={6} />
+        {returnCombiPosition && (
+          <Marker
+            coordinate={returnCombiPosition}
+            anchor={{ x: 0.5, y: 0.5 }}
+            flat={true}
+            title="Combi 2"
+          >
+            <Image
+              source={require("../assets/images/combiicon.png")}
+              style={styles.combiIcon}
+            />
+          </Marker>
         )}
-        <Marker coordinate={busStopPosition} title="Bus Stop">
-          <Image
-            source={require("../assets/images/stopo.png")}
-            style={styles.markerIcon}
-          />
-        </Marker>
+        {mapRoute && (
+          <Polyline coordinates={mapRoute} strokeColor="#41B06E" strokeWidth={6} />
+        )}
       </MapView>
     </View>
   );
@@ -167,14 +147,6 @@ function decodePolyline(encoded) {
   return poly;
 }
 
-function getBearing(startLat, startLng, destLat, destLng) {
-  let y = Math.sin(destLng - startLng) * Math.cos(destLat);
-  let x =
-    Math.cos(startLat) * Math.sin(destLat) -
-    Math.sin(startLat) * Math.cos(destLat) * Math.cos(destLng - startLng);
-  return Math.atan2(y, x) * (180 / Math.PI);
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -183,15 +155,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  markerIcon: {
-    width: 30,
-    height: 30,
-  },
   combiIcon: {
     width: 50,
     height: 40,
-    resizeMode: "contain",
-  },
+    resizeMode: "contain"
+  }
 });
 
 export default MapComponent;
