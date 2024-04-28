@@ -10,6 +10,7 @@ import SignUpScreen from "./screens/SignUpScreen";
 import RideConfirmModal from "./components/OnBoardItems/RideConfirmModal";
 import CombiDetailsModal from "./components/CombiDetailsModal";
 import BottomSheet from "./components/Enroute/BottomSheet";
+import HelpScreen from "./screens/HelpScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Stack = createStackNavigator();
@@ -33,7 +34,7 @@ function RouteSelectionDrawer() {
 }
 
 export default function App() {
-  return <MapComponent />;
+  return <HelpScreen />;
   // return (
   //   <NavigationContainer>
   //     <Stack.Navigator>
