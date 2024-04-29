@@ -43,7 +43,7 @@ function RouteSelectionScreen({ navigation }) {
 
         <View style={styles.operationalHoursContainer}>
           <Text style={styles.operationHoursText}>
-            Operational Hours <Text style={styles.hoursRange}>5:00 am - 9:00pm</Text>
+            Operational Hours <Text style={styles.hoursRange}>6:00 am - 8:00pm</Text>
           </Text>
           <Text style={styles.fareText}>
             Public Transport Fare is P7.00
