@@ -33,7 +33,7 @@ function LoginScreen({ navigation }) {
     try {
       const session = await signIn(email, password);
       setLoading(false);
-      navigation.navigate("RouteSelectionScreen");
+      navigation.navigate("Drawer", { screen: "RouteSelection" });
     } catch (error) {
       setLoading(false);
       Alert.alert("Login Error", error.message);
@@ -99,7 +99,7 @@ function LoginScreen({ navigation }) {
             <Text style={styles.buttonText}>Login</Text>
           )}
         </Pressable>
-        <TouchableOpacity onPress={() => navigation.navigate("SignupScreen")}>
+        <TouchableOpacity onPress={() => navigation.navigate("SignUpScreen")}>
           <Text style={styles.registerText}>Not registered? Sign Up</Text>
         </TouchableOpacity>
       </ScrollView>

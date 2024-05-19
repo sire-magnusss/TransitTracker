@@ -38,7 +38,7 @@ function SignUpScreen({ navigation }) {
       const result = await createUser(username, email, password);
       setIsLoading(false); // Stop loading once the request is done
       if (result) {
-        navigation.navigate("RouteSelectionScreen");
+        navigation.navigate("ModeScreen");
       } else {
         throw new Error("Signup failed");
       }
