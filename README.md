@@ -1,6 +1,15 @@
-# Transit-Tracker
+
 
 # Transit Tracker
+
+
+Developed and tested by:
+Magnus Makgasane- [@sire_magnusss](https://github.com/sire-magnusss).
+Olaotse Ntshonono- [@Olaotse07](https://github.com/Olaotse07)
+Mpho Sekwenyane- [@MphoS23](https://github.com/MphoS23)
+Godiraone Gunda- 
+
+
 # Overview
 The Transit Tracker is a mobile application designed to track the real-time location of public transport vehicles (combis) in Gaborone. This app was developed using React Native and Firebase to provide users with accurate and up-to-date information on combi routes and their current locations. The goal of the project is to improve the commuting experience by making public transportation more predictable and accessible.
 
@@ -78,10 +87,11 @@ Receive Notifications: Stay informed about any route changes or delays through p
 
 Development Process: Managed the project from concept to deployment, ensuring timely completion and quality delivery.
 
-Team Collaboration: Worked collaboratively with team members, contributing to both front-end and back-end development. Team members usernames are: Olaotse Ntshonono, Mpho Sekwenyane, Godiraone Gunda
+Team Collaboration: Worked collaboratively with team members, contributing to both front-end and back-end development. Team members usernames are: Olaotse Ntshonono, Mpho Sekwenyane, Godiraone Gunda and Magnus Makgasane
 
 # Application UI
-![image](https://github.com/user-attachments/assets/06c23d7f-b8ad-4c3f-a0b2-aefd481bd549)
+![image](https://github.com/user-attachments/assets/e090a93a-7b58-495a-8e3d-d84b7e845093)
+
 
 
 # Contributing
