@@ -10,7 +10,7 @@ import TripStatusModal from "./Enroute/TripStatusModal";
 import RatingModal from "./RatingModal";
 import RouteSelectionScreen from "../screens/RouteSelectionScreen";
 
-const GOOGLE_MAPS_APIKEY = "AIzaSyDIw1MqO-GN2-xpmJdPbjAnciuptjbO_d4"; // Use your actual API key
+const GOOGLE_MAPS_APIKEY = "..."; // Use your actual API key from Google to use Map functionalities
 
 const MapComponent = ({ navigation }) => {
   const [route, setRoute] = useState([]);
