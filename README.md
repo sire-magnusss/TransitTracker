@@ -7,7 +7,7 @@ Developed and tested by:
 Magnus Makgasane- [@sire_magnusss](https://github.com/sire-magnusss) ,
 Olaotse Ntshonono- [@Olaotse07](https://github.com/Olaotse07) ,
 Mpho Sekwenyane- [@MphoS23](https://github.com/MphoS23) ,
-Godiraone Gunda- 
+Godiraone Gunda- [@Gundago](https://github.com/Gundago) .
 
 
 # Overview
